@@ -14,7 +14,7 @@ Clerk · Vercel AI SDK · Tailwind + shadcn/ui · Vitest · Playwright
 🚧 In active development (started July 2026)
 
 - [x] Project setup
-- [ ] Auth
+- [x] Auth
 - [ ] Deck creation + AI card generation
 - [ ] Spaced repetition review flow
 - [ ] Stats dashboard
