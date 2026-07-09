@@ -1,5 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { eq, desc } from "drizzle-orm";
+import { flattenError } from "zod";
 
 import { db } from "@/db";
 import { decks } from "@/db/schema";
@@ -31,12 +32,12 @@ export async function POST(request: Request) {
   const parsed = createDeckSchema.safeParse(body);
   if (!parsed.success) {
     return Response.json(
-      { error: "Invalid request body", details: parsed.error.flatten() },
+      { error: "Invalid request body", details: flattenError(parsed.error) },
       { status: 400 },
     );
   }
 
-  const deck = await db
+  const [deck] = await db
     .insert(decks)
     .values({
       userId,
