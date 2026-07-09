@@ -3,6 +3,7 @@ import { eq, desc } from "drizzle-orm";
 
 import { db } from "@/db";
 import { decks } from "@/db/schema";
+import { createDeckSchema } from "@/lib/validations";
 
 export async function GET() {
   const { userId } = await auth();
@@ -18,4 +19,31 @@ export async function GET() {
     .orderBy(desc(decks.createdAt));
 
   return Response.json(userDecks);
+}
+
+export async function POST(request: Request) {
+  const { userId } = await auth();
+  if (!userId) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const body = await request.json();
+  const parsed = createDeckSchema.safeParse(body);
+  if (!parsed.success) {
+    return Response.json(
+      { error: "Invalid request body", details: parsed.error.flatten() },
+      { status: 400 },
+    );
+  }
+
+  const deck = await db
+    .insert(decks)
+    .values({
+      userId,
+      title: parsed.data.title,
+      sourceText: parsed.data.sourceText,
+    })
+    .returning();
+
+  return Response.json(deck, { status: 201 });
 }
