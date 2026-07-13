@@ -13,8 +13,9 @@ export async function GET() {
       "You are a flashcard generator. Create clear, atomic flashcards " +
       "from the provided text. Each card tests exactly one fact or concept.",
     prompt:
-      `Generate 5 flashcards from this text:\n\n${SAMPLE_TEXT}` +
-      "For qa cards, set options to null.",
+      "Generate 5 flashcards from this text:" +
+      `\n\n${SAMPLE_TEXT}` +
+      "\n\nFor qa cards, set options to null.",
   });
 
   console.log(JSON.stringify(output, null, 2));
