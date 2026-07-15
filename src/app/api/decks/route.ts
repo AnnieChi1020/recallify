@@ -3,7 +3,12 @@ import { eq, desc } from "drizzle-orm";
 import { flattenError } from "zod";
 
 import { db } from "@/db";
-import { decks } from "@/db/schema";
+import {
+  decks as decksTable,
+  cards as cardsTable,
+  cardStates as cardStatesTable,
+} from "@/db/schema";
+import { generateCardsFromText } from "@/lib/generate-cards";
 import { createDeckSchema } from "@/lib/validations";
 
 export async function GET() {
@@ -15,9 +20,9 @@ export async function GET() {
 
   const userDecks = await db
     .select()
-    .from(decks)
-    .where(eq(decks.userId, userId))
-    .orderBy(desc(decks.createdAt));
+    .from(decksTable)
+    .where(eq(decksTable.userId, userId))
+    .orderBy(desc(decksTable.createdAt));
 
   return Response.json(userDecks);
 }
@@ -37,14 +42,37 @@ export async function POST(request: Request) {
     );
   }
 
-  const [deck] = await db
-    .insert(decks)
-    .values({
-      userId,
-      title: parsed.data.title,
-      sourceText: parsed.data.sourceText,
-    })
-    .returning();
+  let cards: Awaited<ReturnType<typeof generateCardsFromText>>;
+  try {
+    cards = await generateCardsFromText(parsed.data.sourceText);
+  } catch {
+    return Response.json(
+      { error: "Card generation failed. Please try again." },
+      { status: 502 },
+    );
+  }
+
+  const deck = await db.transaction(async (tx) => {
+    const [newDeck] = await tx
+      .insert(decksTable)
+      .values({
+        userId,
+        title: parsed.data.title,
+        sourceText: parsed.data.sourceText,
+      })
+      .returning();
+
+    const newCards = await tx
+      .insert(cardsTable)
+      .values(cards.map((card) => ({ ...card, deckId: newDeck.id })))
+      .returning();
+
+    await tx
+      .insert(cardStatesTable)
+      .values(newCards.map((card) => ({ cardId: card.id, dueAt: new Date() })));
+
+    return newDeck;
+  });
 
   return Response.json(deck, { status: 201 });
 }
