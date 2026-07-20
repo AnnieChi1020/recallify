@@ -75,7 +75,7 @@ export default function NewDeckPage() {
               disabled={isLoading}
               placeholder="Paste the text you want to turn into flashcards…"
               rows={12}
-              className="resize-none text-base"
+              className="resize-none text-base h-60 overflow-y-auto"
             />
             <p
               className={`text-xs text-right tabular-nums ${isOverLimit ? "text-red-500 font-medium" : "text-zinc-400"}`}
