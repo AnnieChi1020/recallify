@@ -27,17 +27,21 @@ export default async function DeckPage({
   const deckCards = await db.select().from(cards).where(eq(cards.deckId, id));
 
   return (
-    <main className="mx-auto max-w-2xl px-4 py-16">
+    <main className="w-full max-w-2xl mx-auto px-4 py-16">
       <h1 className="text-2xl font-semibold">{deck.title}</h1>
       <p className="text-sm text-zinc-500 mb-8">{deckCards.length} cards</p>
-      <ul className="flex flex-col gap-3">
-        {deckCards.map((card) => (
-          <li key={card.id} className="border rounded-lg p-4">
-            <p className="font-medium">{card.question}</p>
-            <p className="text-sm text-zinc-500 mt-1">{card.answer}</p>
-          </li>
-        ))}
-      </ul>
+      {deckCards.length === 0 ? (
+        <p className="text-sm text-zinc-400">No cards in this deck yet.</p>
+      ) : (
+        <ul className="flex flex-col gap-3">
+          {deckCards.map((card) => (
+            <li key={card.id} className="border rounded-lg p-4">
+              <p className="font-medium">{card.question}</p>
+              <p className="text-sm text-zinc-500 mt-1">{card.answer}</p>
+            </li>
+          ))}
+        </ul>
+      )}
     </main>
   );
 }
