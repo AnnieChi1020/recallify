@@ -42,7 +42,8 @@ export default function NewDeckPage() {
       return;
     }
 
-    router.push("/dashboard");
+    const deck = await res.json();
+    router.push(`/decks/${deck.id}`);
   }
 
   return (
