@@ -15,7 +15,7 @@ Clerk · Vercel AI SDK · Tailwind + shadcn/ui · Vitest · Playwright
 
 - [x] Project setup
 - [x] Auth
-- [ ] Deck creation + AI card generation
+- [x] Deck creation + AI card generation
 - [ ] Spaced repetition review flow
 - [ ] Stats dashboard
 
