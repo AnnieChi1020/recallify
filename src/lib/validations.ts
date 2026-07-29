@@ -26,3 +26,7 @@ export const generatedCardsSchema = z.object({
     .min(1)
     .max(20),
 });
+
+export const submitReviewSchema = z.object({
+  rating: z.number().int().min(0).max(5),
+});
