@@ -20,9 +20,6 @@ export async function GET() {
       answer: cards.answer,
       options: cards.options,
       dueAt: cardStates.dueAt,
-      easeFactor: cardStates.easeFactor,
-      intervalDays: cardStates.intervalDays,
-      repetitions: cardStates.repetitions,
     })
     .from(cardStates)
     .innerJoin(cards, eq(cardStates.cardId, cards.id))
