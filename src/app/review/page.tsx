@@ -1,28 +1,21 @@
 import { auth } from "@clerk/nextjs/server";
-import { eq, and, lte } from "drizzle-orm";
+import { and, eq, lte } from "drizzle-orm";
 
 import { db } from "@/db";
-import { decks, cardStates, cards } from "@/db/schema";
+import { cards, cardStates, decks } from "@/db/schema";
 
-export async function GET() {
-  const { userId } = await auth();
+import { ReviewSession, type Card } from "./review-session";
 
-  if (!userId) {
-    return Response.json({ error: "Unauthorized" }, { status: 401 });
-  }
+export default async function ReviewPage() {
+  const { userId } = await auth.protect();
 
   const dueCards = await db
     .select({
       id: cards.id,
-      deckId: cards.deckId,
       type: cards.type,
       question: cards.question,
       answer: cards.answer,
       options: cards.options,
-      dueAt: cardStates.dueAt,
-      easeFactor: cardStates.easeFactor,
-      intervalDays: cardStates.intervalDays,
-      repetitions: cardStates.repetitions,
     })
     .from(cardStates)
     .innerJoin(cards, eq(cardStates.cardId, cards.id))
@@ -31,5 +24,9 @@ export async function GET() {
     .orderBy(cardStates.dueAt)
     .limit(20);
 
-  return Response.json(dueCards);
+  return (
+    <main className="mx-auto max-w-xl px-4 py-16">
+      <ReviewSession initialCards={dueCards as Card[]} />
+    </main>
+  );
 }
