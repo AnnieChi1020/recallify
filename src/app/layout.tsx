@@ -7,6 +7,7 @@ import {
 } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { Geist_Mono, Inter } from "next/font/google";
+import Link from "next/link";
 
 import "./globals.css";
 import { cn } from "@/lib/utils";
@@ -39,7 +40,7 @@ export default function RootLayout({
             <span className="font-semibold text-lg tracking-tight">
               Recallify
             </span>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-6">
               <Show when="signed-out">
                 <SignInButton mode="modal">
                   <button className="text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50 transition-colors">
@@ -53,6 +54,12 @@ export default function RootLayout({
                 </SignUpButton>
               </Show>
               <Show when="signed-in">
+                <Link
+                  href="/decks"
+                  className="text-sm text-zinc-600 hover:text-zinc-900 transition-colors"
+                >
+                  My Decks
+                </Link>
                 <UserButton />
               </Show>
             </div>
