@@ -36,6 +36,7 @@ export async function GET() {
     totalCards: Number(deckStats.totalCards),
     dueToday: Number(deckStats.dueToday),
     totalReviews: Number(reviewStats.totalReviews),
-    accuracy: Number(reviewStats.accuracy),
+    accuracy:
+      reviewStats.accuracy === null ? null : Number(reviewStats.accuracy),
   });
 }
