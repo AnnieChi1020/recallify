@@ -4,7 +4,6 @@ import { Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
-import { Button } from "@/components/ui/button";
 import {
   AlertDialogRoot,
   AlertDialogTrigger,
@@ -15,6 +14,7 @@ import {
   AlertDialogDescription,
   AlertDialogClose,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 
 export type DeckItem = {
   id: string;
@@ -55,7 +55,10 @@ export function DeckList({ initialDecks }: { initialDecks: DeckItem[] }) {
           key={deck.id}
           className="flex items-center justify-between rounded-2xl border pr-3 transition-colors hover:border-foreground/40"
         >
-          <Link href={`/decks/${deck.id}`} className="flex-1 font-medium px-5 py-4">
+          <Link
+            href={`/decks/${deck.id}`}
+            className="flex-1 font-medium px-5 py-4"
+          >
             {deck.title}
           </Link>
           <AlertDialogRoot>
@@ -69,9 +72,12 @@ export function DeckList({ initialDecks }: { initialDecks: DeckItem[] }) {
             <AlertDialogPortal>
               <AlertDialogBackdrop />
               <AlertDialogPopup>
-                <AlertDialogTitle>Delete &ldquo;{deck.title}&rdquo;?</AlertDialogTitle>
+                <AlertDialogTitle>
+                  Delete &ldquo;{deck.title}&rdquo;?
+                </AlertDialogTitle>
                 <AlertDialogDescription>
-                  This will permanently delete the deck and all its cards. This action cannot be undone.
+                  This will permanently delete the deck and all its cards. This
+                  action cannot be undone.
                 </AlertDialogDescription>
                 <div className="flex justify-end gap-2 mt-6">
                   <AlertDialogClose variant="outline" size="sm">
