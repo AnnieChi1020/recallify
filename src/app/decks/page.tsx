@@ -7,6 +7,8 @@ import { db } from "@/db";
 import { decks } from "@/db/schema";
 import { getStatsForUser } from "@/lib/stats";
 
+import { DeckList } from "./deck-list";
+
 export default async function DecksPage() {
   const { userId } = await auth.protect();
 
@@ -52,30 +54,7 @@ export default async function DecksPage() {
         </Link>
       </div>
 
-      {userDecks.length === 0 ? (
-        <p className="text-sm text-muted-foreground">
-          No decks yet.{" "}
-          <Link href="/decks/new" className="underline underline-offset-4">
-            Create your first deck.
-          </Link>
-        </p>
-      ) : (
-        <ul className="flex flex-col gap-2">
-          {userDecks.map((deck) => (
-            <li key={deck.id}>
-              <Link
-                href={`/decks/${deck.id}`}
-                className="flex items-center justify-between rounded-2xl border px-5 py-4 hover:bg-muted transition-colors group"
-              >
-                <span className="font-medium group-hover:text-foreground transition-colors">
-                  {deck.title}
-                </span>
-                <span className="text-muted-foreground text-sm">→</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      )}
+      <DeckList initialDecks={userDecks} />
     </main>
   );
 }
