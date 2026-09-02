@@ -60,6 +60,12 @@ export default function RootLayout({
                 >
                   My Decks
                 </Link>
+                <Link
+                  href="/review"
+                  className="text-sm text-zinc-600 hover:text-zinc-900 transition-colors"
+                >
+                  Review
+                </Link>
                 <UserButton />
               </Show>
             </div>
