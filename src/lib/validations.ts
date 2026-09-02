@@ -30,3 +30,14 @@ export const generatedCardsSchema = z.object({
 export const submitReviewSchema = z.object({
   rating: z.number().int().min(0).max(5),
 });
+
+export const updateCardSchema = z
+  .object({
+    question: z.string().trim().min(1),
+    answer: z.string().trim().min(1),
+    options: z.array(z.string()).length(4).nullable(),
+  })
+  .partial()
+  .refine((data) => Object.keys(data).length > 0, {
+    message: "At least one field must be provided",
+  });
