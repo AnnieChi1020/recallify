@@ -3,6 +3,16 @@
 import { Pencil, Trash2, Check, X } from "lucide-react";
 import { useState } from "react";
 
+import {
+  AlertDialogRoot,
+  AlertDialogTrigger,
+  AlertDialogPortal,
+  AlertDialogBackdrop,
+  AlertDialogPopup,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogClose,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -22,12 +32,10 @@ export function CardList({ initialCards }: { initialCards: CardItem[] }) {
   const [cards, setCards] = useState(initialCards);
   const [editing, setEditing] = useState<string | null>(null);
   const [draft, setDraft] = useState<EditDraft>({ question: "", answer: "" });
-  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
   function startEdit(card: CardItem) {
-    setConfirmDelete(null);
     setEditing(card.id);
     setDraft({ question: card.question, answer: card.answer });
   }
@@ -70,7 +78,6 @@ export function CardList({ initialCards }: { initialCards: CardItem[] }) {
     if (!res.ok) return;
 
     setCards((prev) => prev.filter((c) => c.id !== id));
-    setConfirmDelete(null);
   }
 
   if (cards.length === 0) {
@@ -81,7 +88,6 @@ export function CardList({ initialCards }: { initialCards: CardItem[] }) {
     <ul className="flex flex-col gap-3">
       {cards.map((card) => {
         const isEditing = editing === card.id;
-        const isConfirming = confirmDelete === card.id;
 
         return (
           <li key={card.id} className="border rounded-lg p-4">
@@ -106,9 +112,7 @@ export function CardList({ initialCards }: { initialCards: CardItem[] }) {
                     size="sm"
                     onClick={() => handleSave(card.id)}
                     disabled={
-                      saving ||
-                      !draft.question.trim() ||
-                      !draft.answer.trim()
+                      saving || !draft.question.trim() || !draft.answer.trim()
                     }
                   >
                     <Check className="size-3.5" />
@@ -127,47 +131,50 @@ export function CardList({ initialCards }: { initialCards: CardItem[] }) {
                   <p className="text-sm text-zinc-500 mt-1">{card.answer}</p>
                 </div>
                 <div className="flex shrink-0 items-center gap-1">
-                  {isConfirming ? (
-                    <>
-                      <Button
-                        size="sm"
-                        variant="destructive"
-                        onClick={() => handleDelete(card.id)}
-                        disabled={deleting}
-                      >
-                        Delete
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => setConfirmDelete(null)}
-                      >
-                        Cancel
-                      </Button>
-                    </>
-                  ) : (
-                    <>
-                      <Button
-                        size="icon-sm"
-                        variant="ghost"
-                        onClick={() => startEdit(card)}
-                        aria-label="Edit card"
-                      >
-                        <Pencil />
-                      </Button>
-                      <Button
-                        size="icon-sm"
-                        variant="ghost"
-                        onClick={() => {
-                          setEditing(null);
-                          setConfirmDelete(card.id);
-                        }}
-                        aria-label="Delete card"
-                      >
-                        <Trash2 />
-                      </Button>
-                    </>
-                  )}
+                  <Button
+                    size="icon-sm"
+                    variant="ghost"
+                    onClick={() => startEdit(card)}
+                    aria-label="Edit card"
+                  >
+                    <Pencil />
+                  </Button>
+                  <AlertDialogRoot>
+                    <AlertDialogTrigger
+                      render={
+                        <Button
+                          size="icon-sm"
+                          variant="ghost"
+                          aria-label="Delete card"
+                        >
+                          <Trash2 />
+                        </Button>
+                      }
+                    />
+                    <AlertDialogPortal>
+                      <AlertDialogBackdrop />
+                      <AlertDialogPopup>
+                        <AlertDialogTitle>Delete this card?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This will permanently delete the card and its review
+                          history. This action cannot be undone.
+                        </AlertDialogDescription>
+                        <div className="flex justify-end gap-2 mt-6">
+                          <AlertDialogClose variant="outline" size="sm">
+                            Cancel
+                          </AlertDialogClose>
+                          <AlertDialogClose
+                            variant="destructive"
+                            size="sm"
+                            disabled={deleting}
+                            onClick={() => handleDelete(card.id)}
+                          >
+                            Delete
+                          </AlertDialogClose>
+                        </div>
+                      </AlertDialogPopup>
+                    </AlertDialogPortal>
+                  </AlertDialogRoot>
                 </div>
               </div>
             )}
